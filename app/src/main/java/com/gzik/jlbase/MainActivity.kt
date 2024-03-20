@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gzik.jlbase.ui.theme.JLBaseTheme
 import com.jlbase.conn.ConnBootStrap
+import com.jlbase.conn.Logger
+import com.jlbase.conn.MsgDispatcher
+import com.jlbase.conn.listener.MsgObserver
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +31,12 @@ class MainActivity : ComponentActivity() {
             }
         }
         ConnBootStrap.instance.init("","").start()
+        MsgDispatcher.instance.registerObserver(object : MsgObserver{
+            override fun onNewMsg(msg: String) {
+                //处理消息
+                Logger.d("客户端收到服务侧过来的消息：$msg")
+            }
+        })
     }
 }
 
