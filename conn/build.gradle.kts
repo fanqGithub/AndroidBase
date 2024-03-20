@@ -40,5 +40,5 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    api("io.netty:netty-all:4.1.79.Final")
+    implementation("io.netty:netty-all:4.1.79.Final")
 }

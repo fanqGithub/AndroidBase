@@ -124,13 +124,13 @@ class NettyConnConnection private constructor(): IConnection {
     /**
      * 发送数据
      */
-    override fun sendData(data: ByteArray) {
+    override fun sendData(msg: String) {
         if (!isConnected) {
             Logger.d("未连接到服务器，无法发送数据")
             return
         }
         runCatching {
-            channel?.writeAndFlush(data)?.addListener { future ->
+            channel?.writeAndFlush(msg)?.addListener { future ->
                 if (future.isSuccess) {
                     Logger.d("发送数据成功")
                 } else {

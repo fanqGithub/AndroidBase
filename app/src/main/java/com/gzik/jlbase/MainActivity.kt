@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gzik.jlbase.ui.theme.JLBaseTheme
+import com.jlbase.conn.ConnBootStrap
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        ConnBootStrap.instance.init("","").start()
     }
 }
 

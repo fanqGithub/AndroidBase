@@ -22,5 +22,5 @@ interface IConnection {
     /**
      * 发送数据
      */
-    fun sendData(data: ByteArray)
+    fun sendData(data: String)
 }

@@ -1,6 +1,7 @@
 package com.jlbase.conn.handler
 
 import com.jlbase.conn.Logger
+import com.jlbase.conn.netty.NettyConnConnection
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.handler.timeout.IdleState
@@ -12,7 +13,7 @@ import io.netty.handler.timeout.IdleStateEvent
  * @desc:心跳机制
  * 用于捕获{@link IdleState#WRITER_IDLE}事件（未在指定时间内向服务器发送数据），然后向<code>Server</code>端发送一个心跳包。
  */
-class HeartBeatIdleStateTrigger : ChannelInboundHandlerAdapter(){
+class HeartBeatIdleStateTrigger(private val connection: NettyConnConnection) : ChannelInboundHandlerAdapter(){
 
     override fun userEventTriggered(ctx: ChannelHandlerContext?, evt: Any?) {
         Logger.d("HeartBeatIdleStateTrigger#userEventTriggered")
@@ -27,7 +28,7 @@ class HeartBeatIdleStateTrigger : ChannelInboundHandlerAdapter(){
                 IdleState.WRITER_IDLE -> {
                     //规定时间内没向服务端发送心跳包，即发送一个心跳包
                     Logger.d("HeartBeatIdleStateTrigger发送心跳包")
-                    ctx?.writeAndFlush("心跳包")
+                    connection.sendData("心跳包")
                 }
                 else -> {}
             }
