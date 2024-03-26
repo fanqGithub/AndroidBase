@@ -1,5 +1,8 @@
 package com.jlbase.conn.base
 
+import com.jlbase.conn.listener.IMsgSendListener
+import com.jlbase.conn.model.Msg
+
 /**
  * @Auther: fanqi
  * @datetime: 2024/3/19
@@ -22,5 +25,5 @@ interface IConnection {
     /**
      * 发送数据
      */
-    fun sendData(data: String)
+    fun sendData(data: Msg,isNeedRetry:Boolean=false, sendListener: IMsgSendListener?=null)
 }

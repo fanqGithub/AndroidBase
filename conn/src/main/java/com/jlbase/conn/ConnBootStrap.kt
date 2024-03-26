@@ -1,6 +1,7 @@
 package com.jlbase.conn
 
 import com.jlbase.conn.netty.NettyConnConnection
+import com.jlbase.conn.utils.Logger
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -17,17 +18,27 @@ class ConnBootStrap private constructor(){
     }
 
     private val hasInit=AtomicBoolean(false)
+    private var mApkSession=""
+    private var mUid=""
 
 
     fun init(apkSession: String, uId:String):ConnBootStrap{
         //初始化
         if (hasInit.compareAndSet(false,true)){
             NettyConnConnection.instance.init(fetchServerList())
+            mApkSession=apkSession
+            mUid=uId
+        }else{
+            Logger.d("ConnBootStrap has been initialized")
         }
         return this
     }
 
-    fun start(){
+    /**
+     *
+     */
+    fun startConnect(){
+        checkInit()
         NettyConnConnection.instance.connect()
     }
 
@@ -39,6 +50,20 @@ class ConnBootStrap private constructor(){
         return mutableListOf(
             "192.168.155.111:8855"
         )
+    }
+
+    /**
+     * 断开连接
+     */
+    fun disConnect(){
+        checkInit()
+        NettyConnConnection.instance.disconnect()
+    }
+
+    private fun checkInit(){
+        if (!hasInit.get()){
+            throw IllegalStateException("ConnBootStrap has not been initialized")
+        }
     }
 
 

@@ -1,11 +1,15 @@
 package com.jlbase.conn.netty
 
-import com.jlbase.conn.Logger
 import com.jlbase.conn.MsgDispatcher
 import com.jlbase.conn.base.ConnConfig
 import com.jlbase.conn.base.IConnection
+import com.jlbase.conn.handler.ReadHandler
 import com.jlbase.conn.listener.ConnectStatusObserver
+import com.jlbase.conn.listener.IMsgSendListener
+import com.jlbase.conn.listener.INetWorkListener
 import com.jlbase.conn.listener.MsgObserver
+import com.jlbase.conn.model.Msg
+import com.jlbase.conn.utils.Logger
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
@@ -13,14 +17,13 @@ import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
-import io.netty.util.concurrent.ScheduledFuture
 
 /**
  * @Auther: fanqi
  * @datetime: 2024/3/19
  * @desc:基于Netty+TCP
  */
-class NettyConnConnection private constructor(): IConnection {
+class NettyConnConnection private constructor(): IConnection,INetWorkListener {
 
     private val workerGroup = NioEventLoopGroup(4)
     private var channel: Channel? = null
@@ -122,25 +125,50 @@ class NettyConnConnection private constructor(): IConnection {
     }
 
     /**
-     * 发送数据
+     * 关闭通道
      */
-    override fun sendData(msg: String) {
+    private fun closeChannel(){
+        try {
+            if (channel != null) {
+                removeHandler(ReadHandler::class.java.simpleName)
+                try {
+                    channel!!.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                try {
+                    channel!!.eventLoop().shutdownGracefully()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }finally {
+            channel=null
+        }
+    }
+
+    override fun sendData(data: Msg, isNeedRetry:Boolean, sendListener: IMsgSendListener?) {
         if (!isConnected) {
             Logger.d("未连接到服务器，无法发送数据")
+            sendListener?.onSendFail(data,"未连接到服务器，无法发送数据")
             return
         }
         runCatching {
-            channel?.writeAndFlush(msg)?.addListener { future ->
+            channel?.writeAndFlush(data)?.addListener { future ->
                 if (future.isSuccess) {
                     Logger.d("发送数据成功")
+                    sendListener?.onSendSuccess(data)
                 } else {
                     Logger.d("发送数据失败")
+                    sendListener?.onSendFail(data,future.cause())
                 }
             }
         }.onFailure {
             Logger.d("发送数据失败，错误=[%s]".format(it.message))
+            sendListener?.onSendFail(data,it.message)
         }
     }
+
 
     /**
      * 添加状态观察者
@@ -202,6 +230,14 @@ class NettyConnConnection private constructor(): IConnection {
             it.printStackTrace()
             Logger.d("移除handler失败，handlerName=$handlerName")
         }
+    }
+
+    override fun onNetworkAvailable() {
+        //进行重连等
+    }
+
+    override fun onNetworkUnavailable() {
+
     }
 
 }

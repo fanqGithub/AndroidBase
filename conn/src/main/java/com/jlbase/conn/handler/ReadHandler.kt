@@ -1,6 +1,6 @@
 package com.jlbase.conn.handler
 
-import com.jlbase.conn.Logger
+import com.jlbase.conn.utils.Logger
 import com.jlbase.conn.MsgDispatcher
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter

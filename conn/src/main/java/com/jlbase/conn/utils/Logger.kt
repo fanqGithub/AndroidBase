@@ -1,4 +1,4 @@
-package com.jlbase.conn
+package com.jlbase.conn.utils
 
 import android.util.Log
 

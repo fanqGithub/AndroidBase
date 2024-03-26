@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gzik.jlbase.ui.theme.JLBaseTheme
 import com.jlbase.conn.ConnBootStrap
-import com.jlbase.conn.Logger
+import com.jlbase.conn.utils.Logger
 import com.jlbase.conn.MsgDispatcher
 import com.jlbase.conn.listener.MsgObserver
 
