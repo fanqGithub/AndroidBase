@@ -1,6 +1,8 @@
 package com.jlbase.conn.handler
 
 import com.jlbase.conn.Sender
+import com.jlbase.conn.listener.IMsgSendListener
+import com.jlbase.conn.model.Msg
 import com.jlbase.conn.utils.Logger
 import com.jlbase.conn.netty.NettyConnConnection
 import io.netty.channel.ChannelHandlerContext
@@ -29,7 +31,16 @@ class HeartBeatIdleStateTrigger(private val connection: NettyConnConnection) : C
                 IdleState.WRITER_IDLE -> {
                     //规定时间内没向服务端发送心跳包，即发送一个心跳包
                     Logger.d("HeartBeatIdleStateTrigger发送心跳包")
-                    Sender().send("心跳包")
+                    Sender().send("心跳包", listener = object :IMsgSendListener<Msg>{
+                        override fun onSendSuccess(msg: Msg) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onSendFail(msg: Msg, error: Throwable?) {
+
+                        }
+
+                    })
                 }
                 else -> {}
             }

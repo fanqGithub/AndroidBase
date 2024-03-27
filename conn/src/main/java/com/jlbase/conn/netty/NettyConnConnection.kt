@@ -147,10 +147,10 @@ class NettyConnConnection private constructor(): IConnection,INetWorkListener {
         }
     }
 
-    override fun sendData(data: Msg, isNeedRetry:Boolean, sendListener: IMsgSendListener?) {
+    override fun sendData(data: Msg, isNeedRetry:Boolean, sendListener: IMsgSendListener<Msg>?) {
         if (!isConnected) {
             Logger.d("未连接到服务器，无法发送数据")
-            sendListener?.onSendFail(data,"未连接到服务器，无法发送数据")
+            sendListener?.onSendFail(data, Throwable("未连接到服务器，无法发送数据"))
             return
         }
         runCatching {
@@ -165,7 +165,7 @@ class NettyConnConnection private constructor(): IConnection,INetWorkListener {
             }
         }.onFailure {
             Logger.d("发送数据失败，错误=[%s]".format(it.message))
-            sendListener?.onSendFail(data,it.message)
+            sendListener?.onSendFail(data, Throwable(it.message))
         }
     }
 

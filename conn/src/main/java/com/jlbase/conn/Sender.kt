@@ -10,7 +10,7 @@ import com.jlbase.conn.netty.NettyConnConnection
  * @desc:上行/消息发送
  */
 class Sender {
-    fun send(msg:String,retry:Boolean=false,listener: IMsgSendListener?=null){
+    fun send(msg:String,retry:Boolean=false,listener: IMsgSendListener<Msg>?=null){
         NettyConnConnection.instance.sendData(Msg.newMsg(msg),retry,listener)
     }
 

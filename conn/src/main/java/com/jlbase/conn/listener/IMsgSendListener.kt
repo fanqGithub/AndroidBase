@@ -5,7 +5,7 @@ package com.jlbase.conn.listener
  * @datetime: 2024/3/26
  * @desc:
  */
-interface IMsgSendListener {
-    fun <M> onSendSuccess(msg:M)
-    fun <M,E> onSendFail(msg: M,error:E)
+interface IMsgSendListener<M> {
+    fun onSendSuccess(msg:M)
+    fun onSendFail(msg: M,error:Throwable?)
 }
